@@ -20,7 +20,14 @@ app.engine('html', require('ejs').renderFile)
 app.get('/jobs', (req, res) => res.render('index.html'))
 app.post('/jobs', readBody, saveJobs)
 
-app.get('/register', (req, res) =>  (pool.query(`select * from register`, ( error,data ) => { res.send(data) })))
+app.get('/register', (req, res) =>  (pool.query(`select * from register`, ( error,data ) => { 
+     data.forEach((value, key) => {
+       console.log(`key: ${key} : value: ${value}`)
+     });
+      
+    res.send(data) 
+  })
+))
 
 async function  saveJobs(req, res){
 
@@ -39,9 +46,9 @@ async function  saveJobs(req, res){
     
     console.log("\n\nEncrypted string : " + encryptMySecureText);
     
-    let decryptMySecureText = await decryptEncodedstring(encryptMySecureText);
+    // let decryptMySecureText = await decryptEncodedstring(encryptMySecureText);
     
-    console.log("\n\decryptResult string : " + decryptMySecureText);
+    // console.log("\n\decryptResult string : " + decryptMySecureText);
     
     i++;
    }
