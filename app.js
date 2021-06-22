@@ -24,7 +24,6 @@ app.get('/register', (req, res) =>  (pool.query(`select * from register`, ( erro
      data.forEach((value, key) => {
        console.log(`key: ${key} : value: ${value}`)
      });
-      
     res.send(data) 
   })
 ))
