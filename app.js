@@ -14,37 +14,49 @@ const kmsClient = new AWS.KMS({
   secretAccessKey: "foAjEvEkmVLTSqYIY5h/HZ2IwIsz+oc6T9ye1P8U"
 });
 
-var pool    = mysql.createPool({
-                    host:'localhost', 
-                    database:'db_kbtg',
-								    user:'root', 
-                    password:'Ypqe=LyiQ6ti'
-                  })
+var pool    = mysql.createPool({ host:'54.251.234.220:3306', database:'db_kbtg', user:'root', password:'Ypqe=LyiQ6ti'})
 app.listen(8080)
 app.engine('html', require('ejs').renderFile)
 app.get('/jobs', (req, res) => res.render('index.html'))
 app.post('/jobs', readBody, saveJobs)
 
-app.get('/register', (req, res) => (pool.query(`select * from register`, ( error,data ) => { res.send(data) })))
+app.get('/register', (req, res) =>  (pool.query(`select * from register`, ( error,data ) => { res.send(data) })))
 
 async function  saveJobs(req, res){
-	
-	let data = [req.body.full_name, req.body.email, req.body.linkedin, req.body.messages]
 
-  res.send('welcome <br> ' + data )
+	let sql = 'insert into `register`(full_name, email, linkedin, messages) values (?, ?, ?, ?)'
+	let data = [req.body.full_name, req.body.email, req.body.linkedin, req.body.messages]
+  let dataEncode = []
+
+  // res.send('welcome <br> ' + data )
   let i = 0
    
   while( i < data.length ){
     
     let encryptMySecureText = await encryptString(data[i]);  
-  
+    
+    dataEncode[i] = encryptMySecureText
+    
     console.log("\n\nEncrypted string : " + encryptMySecureText);
     
     let decryptMySecureText = await decryptEncodedstring(encryptMySecureText);
+    
     console.log("\n\decryptResult string : " + decryptMySecureText);
     
     i++;
    }
+  //  console.log(dataEncode)
+  pool.query(sql, dataEncode, function(error, result){
+		let model = { }
+		if(error == null){
+
+			model.message = 'Register Success...'
+
+		} else {
+
+			model.message = 'Fail to register...'
+		}
+	})
   
 }
 async function encryptString(text) {
