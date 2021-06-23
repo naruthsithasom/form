@@ -4,7 +4,6 @@ const mysql = require('mysql')
 const readBody = express.urlencoded({ extended: false })
 const AWS = require('aws-sdk');
 const dotenv = require('dotenv');
-const { render } = require('ejs');
 
 dotenv.config();
 
