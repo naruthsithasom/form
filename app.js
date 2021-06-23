@@ -21,13 +21,19 @@ app.listen(8080)
 app.engine('html', require('ejs').renderFile)
 app.get('/add', showIndex)
 app.post('/add', readBody, addMember)
-app.get('/member', showMember)
+app.get('/decrypt', showDecrypt)
+app.get('/sql', showSql)
+app.get('/encrypt', showEncrypt)
+
 
 function showIndex(req, res){
   res.render('index.html')
 }
+function showEncrypt(req, res){
+  res,render('encrypt.html')
+}
 
-function showMember(req, res){
+function showDecrypt(req, res){
   pool.query(`select * from register`, async function (error, data) {
 
     let dataDecode = []
@@ -48,9 +54,36 @@ function showMember(req, res){
       
       j++;
     }
-    res.send(data)
-    res.send("<hr>")
+    //res.send(dataDecode)
+   // res.send("<hr>")
     res.send(store)
+  
+  })
+}
+function showSql(req, res){
+  pool.query(`select * from register`, async function (error, data) {
+
+    let dataDecode = []
+    let store = []
+    for (let i = 1; i < data.length; i++) {
+      dataDecode.push(data[i].full_name)
+      dataDecode.push(data[i].email)
+      dataDecode.push(data[i].linkedin)
+      dataDecode.push(data[i].messages)
+    }
+  
+    let j = 0
+    while (j < dataDecode.length) {
+      
+      let decryptMySecureText = await decryptEncodedstring(dataDecode[j]);
+      store.push(decryptMySecureText)
+      console.log("\n\decryptResult: " + decryptMySecureText);
+      
+      j++;
+    }
+    res.send(dataDecode)
+   // res.send("<hr>")
+    //res.send(store)
   
   })
 }
