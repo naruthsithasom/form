@@ -1,4 +1,3 @@
-// npm install express ejs body-parser cookie-parser mysql multer
 const express = require('express')
 const app = express()
 const mysql = require('mysql')
@@ -22,16 +21,13 @@ app.engine('html', require('ejs').renderFile)
 app.get('/add', showIndex)
 app.post('/add', readBody, addMember)
 app.get('/decrypt', showDecrypt)
-app.get('/sql', showSql)
 app.get('/encrypt', showEncrypt)
 
 
 function showIndex(req, res){
   res.render('index.html')
 }
-function showEncrypt(req, res){
-  res,render('encrypt.html')
-}
+
 
 function showDecrypt(req, res){
   pool.query(`select * from register`, async function (error, data) {
@@ -50,67 +46,21 @@ function showDecrypt(req, res){
       
       let decryptMySecureText = await decryptEncodedstring(dataDecode[j]);
       store.push(decryptMySecureText)
-      console.log("\n\decryptResult: " + decryptMySecureText);
       
       j++;
     }
-    //res.send(dataDecode)
-   // res.send("<hr>")
     res.send(store)
   
   })
 }
-function showSql(req, res){
+function showEncrypt(req, res){
   pool.query(`select * from register`, async function (error, data) {
 
-    let dataDecode = []
-    let store = []
-    for (let i = 1; i < data.length; i++) {
-      dataDecode.push(data[i].full_name)
-      dataDecode.push(data[i].email)
-      dataDecode.push(data[i].linkedin)
-      dataDecode.push(data[i].messages)
-    }
-  
-    let j = 0
-    while (j < dataDecode.length) {
-      
-      let decryptMySecureText = await decryptEncodedstring(dataDecode[j]);
-      store.push(decryptMySecureText)
-      console.log("\n\decryptResult: " + decryptMySecureText);
-      
-      j++;
-    }
-    res.send(dataDecode)
-   // res.send("<hr>")
-    //res.send(store)
-  
+    res.send(data)
+
   })
 }
-/*
-app.get('/member', (req, res) => (pool.query(`select * from register`, async function (error, data) {
 
-  let dataDecode = []
-
-  for (let i = 1; i < data.length; i++) {
-    dataDecode.push(data[i].full_name)
-    dataDecode.push(data[i].email)
-    dataDecode.push(data[i].linkedin)
-    dataDecode.push(data[i].messages)
-  }
-
-  let j = 0
-  while (j < dataDecode.length) {
-    
-    let decryptMySecureText = await decryptEncodedstring(dataDecode[j]);
-    console.log("\n\decryptResult string : " + decryptMySecureText);
-    
-    j++;
-  }
-  res.send(data)
-
-})))
-*/
 async function addMember(req, res) {
 
   let sql = 'insert into `register`(full_name, email, linkedin, messages) values (?, ?, ?, ?)'
@@ -130,7 +80,7 @@ async function addMember(req, res) {
     i++;
   }
   pool.query(sql, dataEncode, function (error, result) {
-    //let model = {}
+
     if (error == null) {
 
       res.send(dataEncode)
