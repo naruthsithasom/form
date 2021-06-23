@@ -48,6 +48,8 @@ function showMember(req, res){
       
       j++;
     }
+    res.send(data)
+    res.send("<hr>")
     res.send(store)
   
   })
@@ -95,14 +97,14 @@ async function addMember(req, res) {
     i++;
   }
   pool.query(sql, dataEncode, function (error, result) {
-    let model = {}
+    //let model = {}
     if (error == null) {
 
-      model.message = 'Register Success...'
+      res.send(dataEncode)
 
     } else {
 
-      model.message = 'Fail to register...'
+      res.send('Error..')
     }
   })
 
